@@ -3,7 +3,6 @@ name: CI-develop
 on:
   push:
     branches:
-      - develop
       - pipeline-ci-main-and-develop
       
 jobs:
@@ -26,7 +25,6 @@ jobs:
             append_to_pre_release_tag: "dev"
             default_bump: patch
             github_token: ${{ secrets.GITHUB_TOKEN }}
-            pre_release_branches: pipeline-ci-main-and-develop, develop
 
         - name: Create a GitHub prerelease
           uses: actions/create-release@v1
