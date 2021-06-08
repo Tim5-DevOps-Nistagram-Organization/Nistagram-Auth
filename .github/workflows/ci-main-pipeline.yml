@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - pipeline-ci-main-and-develop
 
 jobs:
     ci_main_pipeline_job:
