@@ -24,6 +24,7 @@ jobs:
           with:
             default_bump: patch
             github_token: ${{ secrets.GITHUB_TOKEN }}
+            pre_release_branches: pipeline-ci-main-and-develop
 
         - name: Create a GitHub prerelease
           uses: actions/create-release@v1
