@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - pipeline-ci-main-and-develop
 
 jobs:
     ci_main_pipeline_job:
@@ -23,7 +22,7 @@ jobs:
           id: tag_version
           uses: mathieudutour/github-tag-action@v5.5
           with:
-            default_bump: major
+            default_bump: patch
             github_token: ${{ secrets.GITHUB_TOKEN }}
 
         - name: Create a GitHub release
