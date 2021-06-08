@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class InitController {
     @GetMapping
     public String init() {
-        return "Hello World from Nistagram Auth";
+        return "Hello, Nistagram Auth";
     }
 }
