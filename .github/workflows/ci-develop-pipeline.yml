@@ -3,7 +3,7 @@ name: CI-develop
 on:
   push:
     branches:
-      - pipeline-ci
+      - develop
       
 jobs:
     ci_develop_pipeline_job:
