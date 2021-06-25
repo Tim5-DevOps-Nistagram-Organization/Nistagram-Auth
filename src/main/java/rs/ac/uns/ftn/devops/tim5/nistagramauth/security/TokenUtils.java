@@ -21,14 +21,10 @@ public class TokenUtils {
     private String secret;
 
     public String getUsernameFromToken(String token) {
-        String username;
-        try {
-            Claims claims = this.getClaimsFromToken(token);
-            username = claims.getSubject();
-        } catch (NullPointerException e) {
-            username = null;
-        }
-        return username;
+        Claims claims = this.getClaimsFromToken(token);
+        if (claims == null)
+            return null;
+        return claims.getSubject();
     }
 
     private Claims getClaimsFromToken(String token) {
@@ -42,14 +38,10 @@ public class TokenUtils {
     }
 
     public Date getExpirationDateFromToken(String token) {
-        Date expirationDate;
-        try {
-            final Claims claims = this.getClaimsFromToken(token);
-            expirationDate = claims.getExpiration();
-        } catch (NullPointerException e) {
-            expirationDate = null;
-        }
-        return expirationDate;
+        final Claims claims = this.getClaimsFromToken(token);
+        if (claims == null)
+            return null;
+        return claims.getExpiration();
     }
 
     private boolean isTokenExpired(String token) {
