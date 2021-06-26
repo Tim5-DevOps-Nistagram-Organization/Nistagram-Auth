@@ -3,9 +3,11 @@ ARG STAGE=test
 WORKDIR /usr/src/server
 COPY . .
 
-FROM maven:3.8.1-jdk-11  AS nistagramAuthMicroserviceBuild
+FROM maven:3.8.1-jdk-11 AS nistagramAuthMicroserviceBuild
 ARG STAGE=dev
 WORKDIR /usr/src/server
+# COPY pom.xml /usr/src/server
+# RUN mvn install -Pdev -DskipTests && rm -rf target
 COPY . .
 RUN mvn package -Pdev -DskipTests
 
