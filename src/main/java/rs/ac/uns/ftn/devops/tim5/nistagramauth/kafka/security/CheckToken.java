@@ -29,12 +29,14 @@ public class CheckToken {
     @SendTo
     public String handle(String authToken) {
         UserSecurity userSecurity = new UserSecurity(null, null);
-        String username = tokenUtils.getUsernameFromToken(authToken);
-        if (username != null) {
-            User user = userService.findByUsername(username);
-            if (user != null && user.isVerified() && tokenUtils.validateToken(authToken, user.getUsername())) {
-                userSecurity.setUsername(user.getUsername());
-                userSecurity.setRole(user.getRole().toString());
+        if (authToken != null) {
+            String username = tokenUtils.getUsernameFromToken(authToken);
+            if (username != null) {
+                User user = userService.findByUsername(username);
+                if (user != null && user.isVerified() && tokenUtils.validateToken(authToken, user.getUsername())) {
+                    userSecurity.setUsername(user.getUsername());
+                    userSecurity.setRole(user.getRole().toString());
+                }
             }
         }
         return gson.toJson(userSecurity);
