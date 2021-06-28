@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(user);
         String token = UUID.randomUUID().toString();
         verificationTokenService.create(user, token);
-        //todo localhost8080
+        //todo localhost8080 ---> prebaciti da ide kroz gateway
         String subject = "Welcome!";
         String message = "<html><head><meta charset=\"UTF-8\"></head>" + "<body><h3>Nistagram app - Welcome!</h3><br>"
                 + "<div><p>You can verify your email "
