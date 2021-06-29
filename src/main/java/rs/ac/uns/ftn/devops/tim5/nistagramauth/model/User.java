@@ -24,10 +24,18 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     private boolean verified;
+    private String websiteUrl;
 
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public User(String username, String password, String email, String websiteUrl) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.websiteUrl = websiteUrl;
     }
 }

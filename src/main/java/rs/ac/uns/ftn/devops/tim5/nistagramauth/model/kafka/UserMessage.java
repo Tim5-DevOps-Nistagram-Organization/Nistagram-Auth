@@ -12,10 +12,13 @@ import lombok.Setter;
 public class UserMessage extends Message {
     private String username;
     private String email;
+    private String websiteUrl;
 
-    public UserMessage(String topic, String replayTopic, String action, String username, String email) {
+    public UserMessage(String topic, String replayTopic, String action,
+                       String username, String email, String websiteUrl) {
         super(topic, replayTopic, action);
         this.username = username;
         this.email = email;
+        this.websiteUrl = websiteUrl;
     }
 }
