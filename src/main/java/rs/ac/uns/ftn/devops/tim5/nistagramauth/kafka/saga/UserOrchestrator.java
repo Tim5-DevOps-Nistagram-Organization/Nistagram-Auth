@@ -24,8 +24,9 @@ public class UserOrchestrator {
 
     @Async
     public void startSaga(User user) {
-        UserMessage message = new UserMessage(Constants.USER_TOPIC, Constants.USER_ORCHESTRATOR_TOPIC, Constants.START_ACTION,
-                user.getUsername(), user.getEmail());
+        UserMessage message = new UserMessage(
+                Constants.USER_TOPIC, Constants.USER_ORCHESTRATOR_TOPIC, Constants.START_ACTION,
+                user.getUsername(), user.getEmail(), user.getWebsiteUrl());
         this.kafkaTemplate.send(message.getTopic(), gson.toJson(message));
     }
 

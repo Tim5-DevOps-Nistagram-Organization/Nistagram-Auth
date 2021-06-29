@@ -38,26 +38,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registration(User user) throws Exception {
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
+    public User findById(Long id) throws ResourceNotFoundException {
+        return userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("User"));
+    }
+
+    @Override
+    public User registration(User user, Role role) throws MessagingException, UniqueFieldUserException {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new UniqueFieldUserException("Username");
         } else if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new UniqueFieldUserException("Email");
         }
-        user.setRole(Role.ROLE_REGULAR);
+        user.setRole(role);
         user.setVerified(false);
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user = userRepository.save(user);
         String token = UUID.randomUUID().toString();
-        verificationTokenService.create(user, token);
-        //todo localhost8080 ---> prebaciti da ide kroz gateway
-        String subject = "Welcome!";
-        String message = "<html><head><meta charset=\"UTF-8\"></head>" + "<body><h3>Nistagram app - Welcome!</h3><br>"
-                + "<div><p>You can verify your email "
-                + "<a target=\"_blank\" href = \"http://localhost:8080/user/verify/" + token
-                + "\"><u>here</u></a>!.</p></div></body></html>";
-        mailService.sendMail(user.getEmail(), subject, message);
+        if (user.getRole().toString().equals(Role.ROLE_REGULAR.toString())) {
+            verificationTokenService.create(user, token);
+            //todo localhost8080 ---> prebaciti da ide kroz gateway
+            String subject = "Welcome!";
+            String message = "<html><head><meta charset=\"UTF-8\"></head>" + "<body><h3>Nistagram app - Welcome!</h3><br>"
+                    + "<div><p>You can verify your email "
+                    + "<a target=\"_blank\" href = \"http://localhost:8080/user/verify/" + token
+                    + "\"><u>here</u></a>!.</p></div></body></html>";
+            mailService.sendMail(user.getEmail(), subject, message);
+        }
+        return user;
     }
+
 
     @Override
     public User verifiedUserEmail(String token) throws ResourceNotFoundException {
@@ -73,6 +87,13 @@ public class UserServiceImpl implements UserService {
         user.setVerified(true);
         userRepository.save(user);
         return user;
+    }
+
+    @Override
+    public User agentRegistrationApproval(User user) throws ResourceNotFoundException {
+        User found = this.findById(user.getId());
+        found.setVerified(true);
+        return userRepository.save(user);
     }
 
     @Override

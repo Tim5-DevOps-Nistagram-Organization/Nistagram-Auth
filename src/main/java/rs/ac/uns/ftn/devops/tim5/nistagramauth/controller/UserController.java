@@ -16,6 +16,7 @@ import rs.ac.uns.ftn.devops.tim5.nistagramauth.dto.UserDTO;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.exception.ResourceNotFoundException;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.kafka.saga.UserOrchestrator;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.mapper.UserMapper;
+import rs.ac.uns.ftn.devops.tim5.nistagramauth.model.Role;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.model.User;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.security.TokenUtils;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.service.UserService;
@@ -59,9 +60,11 @@ public class UserController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> registration(@Valid @RequestBody UserDTO userDTO) throws Exception {
-        userService.registration(UserMapper.toEntity(userDTO));
+        userService.registration(UserMapper.toEntity(userDTO), Role.ROLE_REGULAR);
         return new ResponseEntity<>("You are registered, now you need to verify your email", HttpStatus.OK);
     }
+
+
 
     @GetMapping(value = "/verify/{token}",
             produces = MediaType.APPLICATION_JSON_VALUE)
