@@ -10,4 +10,6 @@ public interface VerificationTokenService {
     VerificationToken getVerificationToken(String token) throws ResourceNotFoundException;
 
     void delete(VerificationToken verificationToken);
+
+    VerificationToken getVerificationTokenByUsername(String username) throws ResourceNotFoundException;
 }

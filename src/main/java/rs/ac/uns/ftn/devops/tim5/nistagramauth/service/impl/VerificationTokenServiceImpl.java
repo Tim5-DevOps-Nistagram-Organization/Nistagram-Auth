@@ -33,4 +33,9 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     public void delete(VerificationToken verificationToken) {
         verificationTokenRepository.delete(verificationToken);
     }
+
+    @Override
+    public VerificationToken getVerificationTokenByUsername(String username) throws ResourceNotFoundException {
+        return verificationTokenRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("Token"));
+    }
 }
