@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -26,6 +29,7 @@ import rs.ac.uns.ftn.devops.tim5.nistagramauth.service.VerificationTokenService;
 import javax.transaction.Transactional;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 import static org.junit.Assert.*;
 
@@ -47,17 +51,17 @@ public class UserIntegrationTest {
 
 
     /*
-    *  Method test User send request for registration
-    *  check if user is added and if is not verified and if role is REGULAR
-    *
-    *  Then automatically do verification and
-    *  test if all data is good after verification
-    *  Verification is done on service level because saga start in controller
-    *  and for saga is needed all other service which participate in saga
-    *
-    *  @Rollback(false) because testUserLogin_Success tests login on registered user
-    *
-    * */
+     *  Method test User send request for registration
+     *  check if user is added and if is not verified and if role is REGULAR
+     *
+     *  Then automatically do verification and
+     *  test if all data is good after verification
+     *  Verification is done on service level because saga start in controller
+     *  and for saga is needed all other service which participate in saga
+     *
+     *  @Rollback(false) because testUserLogin_Success tests login on registered user
+     *
+     * */
     @Test
     @Rollback(false)
     @Order(1)
@@ -69,7 +73,7 @@ public class UserIntegrationTest {
 
         assertEquals(res.getBody(), UserConstants.USER_SUCCESS_LOGIN_MESSAGE);
         User user = userService.findByEmail(UserConstants.EMAIL);
-        assertEquals(user.isVerified(), false);
+        assertFalse(user.isVerified());
         assertEquals(user.getRole().toString(), Role.ROLE_REGULAR.toString());
 
         // verify
@@ -77,7 +81,7 @@ public class UserIntegrationTest {
                 .getVerificationTokenByUsername(user.getUsername());
 
         User verifiedUser = userService.verifiedUserEmail(verificationToken.getToken());
-        assertEquals(verifiedUser.isVerified(), true);
+        assertTrue(verifiedUser.isVerified());
         assertEquals(verifiedUser.getRole().toString(), Role.ROLE_REGULAR.toString());
         assertEquals(verifiedUser.getUsername(), UserConstants.USERNAME);
         assertEquals(verifiedUser.getEmail(), UserConstants.EMAIL);
@@ -85,10 +89,10 @@ public class UserIntegrationTest {
     }
 
     /*
-    *   Method test User login.
-    *   User send username and password and should get token in response
-    *
-    * */
+     *   Method test User login.
+     *   User send username and password and should get token in response
+     *
+     * */
     @Test
     @Order(2)
     public void testUserLogin_Success() throws URISyntaxException {
@@ -96,7 +100,7 @@ public class UserIntegrationTest {
         LoginDTO userLoginDTO = new LoginDTO(UserConstants.USERNAME, UserConstants.PASSWORD);
         HttpEntity<LoginDTO> req = new HttpEntity<>(userLoginDTO, new HttpHeaders());
         ResponseEntity<AccessTokenDTO> res = restTemplate.exchange(uri, HttpMethod.POST, req, AccessTokenDTO.class);
-        assertNotEquals("",res.getBody().getToken());
+        assertNotEquals("", Objects.requireNonNull(res.getBody()).getToken());
     }
 
     /*
@@ -112,10 +116,8 @@ public class UserIntegrationTest {
         LoginDTO userLoginDTO = new LoginDTO(UserConstants.USERNAME_INVALID, UserConstants.PASSWORD);
         HttpEntity<LoginDTO> req = new HttpEntity<>(userLoginDTO, new HttpHeaders());
         ResponseEntity<AccessTokenDTO> res = restTemplate.exchange(uri, HttpMethod.POST, req, AccessTokenDTO.class);
-        assertNull(res.getBody().getToken());
+        assertNull(Objects.requireNonNull(res.getBody()).getToken());
     }
-
-
 
 
 }
