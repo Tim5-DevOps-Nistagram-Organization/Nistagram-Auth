@@ -12,8 +12,12 @@ import java.util.Collection;
 public interface AgentService {
 
     AgentRegistration findById(Long id) throws ResourceNotFoundException;
-    AgentRegistration addAgentRegistrationRequest(User user) throws MessagingException, UniqueFieldUserException;
-    AgentRegistration approveAgentRegistration(Long id) throws ResourceNotFoundException, MessagingException;
-    AgentRegistration rejectAgentRegistration(Long id) throws ResourceNotFoundException, MessagingException;
+
+    void addAgentRegistrationRequest(User user) throws MessagingException, UniqueFieldUserException;
+
+    void approveAgentRegistration(Long id) throws ResourceNotFoundException, MessagingException;
+
+    void rejectAgentRegistration(Long id) throws ResourceNotFoundException, MessagingException;
+
     Collection<AgentRegistration> findAllAgentRegistrationRequests();
 }

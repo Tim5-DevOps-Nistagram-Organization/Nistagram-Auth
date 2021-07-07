@@ -6,27 +6,27 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.devops.tim5.nistagramauth.dto.AgentRegistrationDTO;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.dto.AgentRequestDTO;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.exception.ResourceNotFoundException;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.exception.UniqueFieldUserException;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.mapper.AgentMapper;
-import rs.ac.uns.ftn.devops.tim5.nistagramauth.model.AgentRegistration;
 import rs.ac.uns.ftn.devops.tim5.nistagramauth.service.AgentService;
-
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/agent")
 public class AgentController {
 
-    private AgentService agentService;
+    private final AgentService agentService;
 
     @Autowired
     public AgentController(AgentService agentService) {
-        this.agentService =agentService;
+        this.agentService = agentService;
     }
 
     @PostMapping(value = "/registration",
@@ -38,7 +38,7 @@ public class AgentController {
         return new ResponseEntity<>("You successfully send registration request", HttpStatus.OK);
     }
 
-    @PutMapping(path="/approve/{requestId}")
+    @PutMapping(path = "/approve/{requestId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> approve(@PathVariable Long requestId)
             throws ResourceNotFoundException, MessagingException {
@@ -46,7 +46,7 @@ public class AgentController {
         return new ResponseEntity<>("Request is approved.", HttpStatus.OK);
     }
 
-    @PutMapping(path="/reject/{requestId}")
+    @PutMapping(path = "/reject/{requestId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> reject(@PathVariable Long requestId)
             throws ResourceNotFoundException, MessagingException {
@@ -54,10 +54,11 @@ public class AgentController {
         return new ResponseEntity<>("Request is successfully rejected.", HttpStatus.OK);
     }
 
-    @GetMapping(path="/requests")
+    @GetMapping(path = "/requests")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Collection<AgentRegistration>> getAllRequest() {
-        return new ResponseEntity<>(agentService.findAllAgentRegistrationRequests(), HttpStatus.OK);
+    public ResponseEntity<Collection<AgentRegistrationDTO>> getAllRequest() {
+        return new ResponseEntity<>(agentService.findAllAgentRegistrationRequests().stream()
+                .map(AgentMapper::toDTO).collect(Collectors.toList()), HttpStatus.OK);
     }
 
 }

@@ -20,10 +20,10 @@ import java.util.Collection;
 @Service
 public class AgentServiceImpl implements AgentService {
 
-    private AgentRegistrationRepository agentRegistrationRepository;
-    private MailService mailService;
-    private UserService userService;
-    private UserOrchestrator userOrchestrator;
+    private final AgentRegistrationRepository agentRegistrationRepository;
+    private final MailService mailService;
+    private final UserService userService;
+    private final UserOrchestrator userOrchestrator;
 
     @Autowired
     public AgentServiceImpl(AgentRegistrationRepository agentRegistrationRepository,
@@ -43,7 +43,7 @@ public class AgentServiceImpl implements AgentService {
     }
 
     @Override
-    public AgentRegistration addAgentRegistrationRequest(User user)
+    public void addAgentRegistrationRequest(User user)
             throws UniqueFieldUserException, MessagingException {
         if (userService.findByUsername(user.getUsername()) != null) {
             throw new UniqueFieldUserException("Username");
@@ -52,13 +52,13 @@ public class AgentServiceImpl implements AgentService {
         }
         user = userService.registration(user, Role.ROLE_AGENT);
         AgentRegistration agentRegistration =
-                new AgentRegistration(null,  user.getUsername(), user.getEmail(),
-                        user.getWebsiteUrl(),AgentRegistrationEnum.REQUESTED);
-        return agentRegistrationRepository.save(agentRegistration);
+                new AgentRegistration(null, user.getUsername(), user.getEmail(),
+                        user.getWebsiteUrl(), AgentRegistrationEnum.REQUESTED);
+        agentRegistrationRepository.save(agentRegistration);
     }
 
     @Override
-    public AgentRegistration approveAgentRegistration(Long id) throws ResourceNotFoundException, MessagingException {
+    public void approveAgentRegistration(Long id) throws ResourceNotFoundException, MessagingException {
         AgentRegistration old = this.findById(id);
         old.setState(AgentRegistrationEnum.ACCEPTED);
         User user = userService.findByEmail(old.getEmail());
@@ -73,11 +73,11 @@ public class AgentServiceImpl implements AgentService {
                 + "<body><h3>Nistagram app - Agent registration approved!</h3><br>"
                 + "<div><p>Welcome to Nistagram</div></body></html>";
         mailService.sendMail(user.getEmail(), subject, message);
-        return agentRegistrationRepository.save(old);
+        agentRegistrationRepository.save(old);
     }
 
     @Override
-    public AgentRegistration rejectAgentRegistration(Long id) throws ResourceNotFoundException, MessagingException {
+    public void rejectAgentRegistration(Long id) throws ResourceNotFoundException, MessagingException {
         AgentRegistration old = this.findById(id);
         old.setState(AgentRegistrationEnum.REJECTED);
         User user = userService.findByEmail(old.getEmail());
@@ -86,7 +86,7 @@ public class AgentServiceImpl implements AgentService {
                 + "<body><h3>Nistagram app - Agent registration rejected!</h3><br>"
                 + "<div><p>You can try again </div></body></html>";
         mailService.sendMail(user.getEmail(), subject, message);
-        return  agentRegistrationRepository.save(old);
+        agentRegistrationRepository.save(old);
     }
 
     @Override
