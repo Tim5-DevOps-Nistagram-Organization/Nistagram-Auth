@@ -61,11 +61,10 @@ public class UserServiceImpl implements UserService {
         String token = UUID.randomUUID().toString();
         if (user.getRole().toString().equals(Role.ROLE_REGULAR.toString())) {
             verificationTokenService.create(user, token);
-            //todo localhost8080 ---> prebaciti da ide kroz gateway
             String subject = "Welcome!";
             String message = "<html><head><meta charset=\"UTF-8\"></head>" + "<body><h3>Nistagram app - Welcome!</h3><br>"
                     + "<div><p>You can verify your email "
-                    + "<a target=\"_blank\" href = \"http://localhost:8080/user/verify/" + token
+                    + "<a target=\"_blank\" href = \"http://localhost:8088/auth/user/verify/" + token
                     + "\"><u>here</u></a>!.</p></div></body></html>";
             mailService.sendMail(user.getEmail(), subject, message);
         }
